@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"njajal/indicator"
 	"njajal/model"
@@ -24,9 +25,10 @@ func main() {
 
 	for _, stock := range stocks {
 		price := getPrice(stock)
-		kLine, dLine := indicator.Stochastic(price.Chart.Result[0].Indicators.Quote[0])
-		if kLine > 20 && kLine < 30 && kLine > dLine {
-			fmt.Println(stock, kLine, dLine)
+		kLine, dLine := indicator.Stochastic(price.Chart.Result[0].Indicators.Quote[0], 0)
+		kLine1, dLine1 := indicator.Stochastic(price.Chart.Result[0].Indicators.Quote[0], 1)
+		if kLine > 20 && kLine < 50 && dLine1 > kLine1 && kLine >= dLine {
+			fmt.Println(stock, roundToTwo(kLine), roundToTwo(dLine), roundToTwo(kLine1), roundToTwo(dLine1))
 		}
 	}
 }
@@ -78,4 +80,8 @@ func readAllEmiten() []string {
 	}
 
 	return stocks
+}
+
+func roundToTwo(num float64) float64 {
+	return math.Round(num*100) / 100
 }
